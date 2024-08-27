@@ -1,0 +1,78 @@
+CREATE TABLE Customer_Dim (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    date_of_birth DATE,
+    gender ENUM('Male', 'Female', 'Other'),
+    marital_status ENUM('Single', 'Married', 'Divorced', 'Widowed', 'Other'),
+    income_level VARCHAR(50),
+    employment_status VARCHAR(50),
+    address VARCHAR(100),
+    city VARCHAR(50),
+    state VARCHAR(50),
+    country VARCHAR(50)
+);
+
+CREATE TABLE Financial_Service_Dim (
+    Financial_Service_id INT PRIMARY KEY AUTO_INCREMENT,
+    Financial_Service_name VARCHAR(100),
+    Financial_Service_type ENUM('Credit Card', 'Personal Loan', 'Mortgage', 'Other'),
+    interest_rate DECIMAL(5, 2),
+    Financial_Service_category ENUM('Secured', 'Unsecured'),
+    description TEXT
+);
+
+
+CREATE TABLE Time_Dim (
+    time_id INT PRIMARY KEY AUTO_INCREMENT,
+    date DATE,
+    day INT,
+    month INT,
+    quarter INT,
+    year INT,
+    day_of_week ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+    is_weekend BOOLEAN
+);
+
+
+CREATE TABLE Risk_Category_Dim (
+    risk_category_id INT PRIMARY KEY AUTO_INCREMENT,
+    risk_category_name ENUM('Low', 'Medium', 'High', 'Very High'),
+    description TEXT
+);
+
+
+CREATE TABLE Credit_Score_Fact (
+    credit_score_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT,
+    Financial_Service_id INT,
+    time_id INT,
+    risk_category_id INT,
+    credit_score DECIMAL(5, 2),
+    score_date DATE,
+    source ENUM('Internal', 'External Bureau'),
+    FOREIGN KEY (customer_id) REFERENCES Customer_Dim(customer_id),
+    FOREIGN KEY (Financial_Service_id) REFERENCES Financial_Service_Dim(Financial_Service_id),
+    FOREIGN KEY (time_id) REFERENCES Time_Dim(time_id),
+    FOREIGN KEY (risk_category_id) REFERENCES Risk_Category_Dim(risk_category_id)
+);
+
+CREATE TABLE Loan_Approval_Fact (
+    loan_approval_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT,
+    Financial_Service_id INT,
+    time_id INT,
+    loan_amount DECIMAL(10, 2),
+    interest_rate DECIMAL(5, 2),
+    approval_status ENUM('Approved', 'Rejected', 'Pending'),
+    loan_approval_date DATE,
+    risk_category_id INT,
+    FOREIGN KEY (customer_id) REFERENCES Customer_Dim(customer_id),
+    FOREIGN KEY (Financial_Service_id) REFERENCES Financial_Service_Dim(Financial_Service_id),
+    FOREIGN KEY (time_id) REFERENCES Time_Dim(time_id),
+    FOREIGN KEY (risk_category_id) REFERENCES Risk_Category_Dim(risk_category_id)
+);
+
+
+
+
